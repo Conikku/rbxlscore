@@ -57,7 +57,7 @@ MultiUserResult: {
 
 ```ts
 SingleUserResult: {
-    success: boolean,
+	success: boolean,
 	userId: number?,
 	score: number?,
 	flaggedItems: {@FlaggedItem}?,
