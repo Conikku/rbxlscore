@@ -1,7 +1,7 @@
 # Properties
 
 ### fetchedPatterns
-```ts
+```luau
 fetchedPatterns: @PatternData?
 ```
 Stores the fetched patterns from github so that they are only fetched once.
@@ -9,7 +9,7 @@ Stores the fetched patterns from github so that they are only fetched once.
 # Functions
 
 ### getUserAccessories
-```ts
+```luau
 getUserAccessories: (userId: number) -> ({@AccessoryInfo})
 ```
 Retrieves all the accessories of a user, including shirts, pants, and any other assets that are currently worn.\
@@ -18,7 +18,7 @@ Retrieves all the accessories of a user, including shirts, pants, and any other 
 
 ### CheckUserIds
 
-```ts
+```luau
 CheckUserIds: (userIds: {number}) -> (@MultiUserResult)
 ```
 Check the accessories of multiple users for flagged patterns, determining the appropriateness of each avatar.
@@ -27,7 +27,7 @@ The server evaluates the avatars based on a point-based system, returning the re
 `@returns:MultiUserResult`: Contains the evaluation results of the avatars
 
 ### CheckUserId
-```ts
+```luau
 CheckUserId: (userId: number) -> (@SingleUserResult)
 ```
 Check the user's accessories for flagged patterns, determining the appropriateness of the avatar.
@@ -36,7 +36,7 @@ The server evaluates the avatar based on a point-based system and returns the re
 `@returns:SingleUserResult`: Contains the evaluation results of the avatar
 
 ### modifyPattern
-```ts
+```luau
 modifyPattern: (listType: string, pattern: string, points: number?) -> (@PatternModifyResult)
 ```
 Adds new patterns in the whiteList or blackList.

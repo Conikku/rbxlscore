@@ -2,7 +2,7 @@
 
 ### AccessoryInfo
 
-```ts
+```luau
 AccessoryInfo: {
     name: string,
     assetId: number,
@@ -13,7 +13,7 @@ AccessoryInfo: {
 
 ### FlaggedItem
 
-```ts
+```luau
 FlaggedItem: {
     item: @AccessoryInfo,
     pattern: string,
@@ -26,7 +26,7 @@ FlaggedItem: {
 
 ### UserResult
 
-```ts
+```luau
 UserResult: {
     userId: number,
     score: number,
@@ -39,7 +39,7 @@ UserResult: {
 
 ### MultiUserResult
 
-```ts
+```luau
 MultiUserResult: {
     success: boolean,
     users: {@UserResult}?,
@@ -55,7 +55,7 @@ MultiUserResult: {
 
 ### SingleUserResult
 
-```ts
+```luau
 SingleUserResult: {
     success: boolean,
     userId: number?,
@@ -72,7 +72,7 @@ SingleUserResult: {
 <sub>- This is used in the api instead of `UserResult` due to it being unreliable to flag HTTP request fails</sub>
 
 ### PatternModifyResult
-```ts
+```luau
 PatternModifyResult: {
     success: boolean,
     message: string?
@@ -83,7 +83,7 @@ PatternModifyResult: {
 
 ### Pattern
 
-```ts
+```luau
 Pattern: {
     pattern: string,
     points: number
@@ -94,10 +94,10 @@ Pattern: {
 
 ### PatternData
 
-```ts
+```luau
 PatternData: {
     whiteList: {string},
-    blackList: {@Pattern}
+    blackList: {Pattern}
 }
 ```
 `whiteList`: A list of white listed pattern match strings\
