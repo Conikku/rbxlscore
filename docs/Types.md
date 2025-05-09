@@ -28,9 +28,9 @@ FlaggedItem: {
 
 ```ts
 UserResult: {
-	userId: number,
-	score: number,
-	flaggedItems: {@FlaggedItem}
+    userId: number,
+    score: number,
+    flaggedItems: {@FlaggedItem}
 }
 ```
 `userId`: A user id of the describing player\
@@ -57,11 +57,11 @@ MultiUserResult: {
 
 ```ts
 SingleUserResult: {
-	success: boolean,
-	userId: number?,
-	score: number?,
-	flaggedItems: {@FlaggedItem}?,
-	message: string?
+    success: boolean,
+    userId: number?,
+    score: number?,
+    flaggedItems: {@FlaggedItem}?,
+    message: string?
 }
 ```
 `success`: Flags whether or not the user fetch was succesful\
@@ -85,8 +85,8 @@ PatternModifyResult: {
 
 ```ts
 Pattern: {
-	pattern: string,
-	points: number
+    pattern: string,
+    points: number
 }
 ```
 `pattern`: A string that is to be matched\
@@ -96,8 +96,8 @@ Pattern: {
 
 ```ts
 PatternData: {
-	whiteList: {string},
-	blackList: {@Pattern}
+    whiteList: {string},
+    blackList: {@Pattern}
 }
 ```
 `whiteList`: A list of white listed pattern match strings\
