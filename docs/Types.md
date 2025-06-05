@@ -20,7 +20,7 @@ FlaggedItem: {
     score: number
 }
 ```
-`item`: An `AccessoryInfo` describing the flagged item\
+`item`: An [`AccessoryInfo`](#accessoryinfo) describing the flagged item\
 `pattern`: The flagged sub-string of the item name\
 `score`: The score of the item according to the `pattern`
 
@@ -35,7 +35,7 @@ UserResult: {
 ```
 `userId`: A user id of the describing player\
 `score`: The total score of all the flagged items of the players avatar\
-`flaggedItems`: A table containing all flagged items the user is wearing on their avatar
+`flaggedItems`: A table containing all [flagged items](#flaggeditem) the user is wearing on their avatar
 
 ### MultiUserResult
 
@@ -48,7 +48,7 @@ MultiUserResult: {
 }
 ```
 `success`: Flags whether or not the user fetchs was succesful\
-`users`: A list of `UserResult`s of the users, *if the fetch didn't fail*\
+`users`: A list of [`UserResult`](#userresult)s of the users, *if the fetch didn't fail*\
 `totalScore`: The total score of all the users from the fetch, *if the fetch didn't fail*\
 `message`: An error message if the fetch has failed\
 <sub>- The so called "fetch" is performed to get patterns from the github patterns json that can be found [here](https://github.com/DevKrazes/RBXLSCORE/blob/main/patterns.json), this includes error cases since this type is exposed in the api</sub>
@@ -67,7 +67,7 @@ SingleUserResult: {
 `success`: Flags whether or not the user fetch was succesful\
 `userId`: A user id of the describing player, *if the fetch didn't fail*\
 `score`: The total score of all the flagged items, *if the fetch didn't fail*\
-`flaggedItems`: A table containing all flagged items the user is wearing on their avatar, *if the fetch didn't fail*\
+`flaggedItems`: A table containing all [flagged items](#flaggeditem) the user is wearing on their avatar, *if the fetch didn't fail*\
 `message`: An error message if the fetch has failed\
 <sub>- This is used in the api instead of `UserResult` due to it being unreliable to flag HTTP request fails</sub>
 
@@ -101,4 +101,4 @@ PatternData: {
 }
 ```
 `whiteList`: A list of white listed pattern match strings\
-`blackList`: A list of black listed `Pattern`s
+`blackList`: A list of black listed [`Pattern`](#pattern)s
