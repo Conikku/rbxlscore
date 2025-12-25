@@ -6,6 +6,22 @@ fetchedPatterns: @PatternData?
 ```
 Stores the fetched [patterns](Types.md#patterndata) from github so that they are only fetched once.
 
+### ignoreRobloxItems
+```luau
+ignoreRobloxItems: boolean
+```
+Toggle to ignore Roblox items, set to false by default. Enabling it will prevent less false positives.
+
+### Example:
+```luau
+local rbxlscore = require(path.to.module)
+
+-- Enable filtering of Roblox items
+rbxlscore.ignoreRobloxItems = true
+
+-- Now check users (Roblox-created items will be ignored)
+local result = rbxlscore.CheckUserId(123456789)
+```
 # Functions
 
 ### getUserAccessories
