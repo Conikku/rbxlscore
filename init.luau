@@ -11,7 +11,8 @@ local Marketplace = game:GetService("MarketplaceService")
 
 export type AccessoryInfo = {
 	name: string,
-	assetId: number
+	assetId: number,
+	creatorId: number?
 }
 
 export type FlaggedItem = {
@@ -61,6 +62,9 @@ local module = {}
 -- Store the fetched patterns so that they are only fetched once.
 module.fetchedPatterns = nil :: PatternData?
 
+-- Toggle to ignore items created by Roblox account (User ID: 1)
+module.ignoreRobloxItems = false
+
 --[=[
     Retrieves all the accessories of a user, including shirts, pants, and any other assets that are currently worn.
     @param userId: number - The user ID of the player whose accessories are being retrieved.
@@ -92,7 +96,8 @@ module.getUserAccessories = function(userId: number): {AccessoryInfo}
 			local data = Marketplace:GetProductInfo(id)
 			table.insert(accessories, {
 				name = data.Name,
-				assetId = id
+				assetId = id,
+				creatorId = data.Creator.CreatorTargetId or data.Creator.Id
 			})
 		end)
 
@@ -150,6 +155,18 @@ local function findOriginalCaseMatch(accessoryName: string, lowerPattern: string
 end
 
 --[=[
+    Check if an accessory should be ignored based on the Roblox filter toggle
+    @param accessory: AccessoryInfo - The accessory to check
+    @returns boolean - True if the accessory should be ignored
+]=]
+local function shouldIgnoreAccessory(accessory: AccessoryInfo): boolean
+	if module.ignoreRobloxItems and accessory.creatorId == 1 then
+		return true
+	end
+	return false
+end
+
+--[=[
     Check the accessories of multiple users for flagged patterns, determining the appropriateness of each avatar.
     The server evaluates the avatars based on a point-based system, returning the results for each user in a table format.
 
@@ -179,6 +196,11 @@ module.CheckUserIds = function(userIds: {number}): MultiUserResult
 		local userScore = 0
 
 		for _, accessory in accessories do
+			-- Skip if this accessory should be ignored
+			if shouldIgnoreAccessory(accessory) then
+				continue
+			end
+
 			local accessoryName = accessory.name
 			local lowerAccessoryName = accessoryName:lower()
 
@@ -251,6 +273,11 @@ module.CheckUserId = function(userId: number): SingleUserResult
 	local totalScore = 0
 
 	for _, accessory in accessories do
+		-- Skip if this accessory should be ignored
+		if shouldIgnoreAccessory(accessory) then
+			continue
+		end
+
 		local accessoryName = accessory.name
 		local lowerAccessoryName = accessoryName:lower()
 
