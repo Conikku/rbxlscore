@@ -70,9 +70,13 @@ module.ignoreRobloxItems = false
     @param userId: number - The user ID of the player whose accessories are being retrieved.
     @returns accessories: {AccessoryInfo} - A table containing the names and asset IDs of the user's accessories.
 ]=]
-module.getUserAccessories = function(userId: number): {AccessoryInfo}
+module.getUserAccessories = function(userId: number): {AccessoryInfo}?
+	if userId < 0 then
+		return {}
+	end
+	
 	local accessoryIds = {}
-	local humanoidDescription = Players:GetHumanoidDescriptionFromUserId(userId)
+	local humanoidDescription = Players:GetHumanoidDescriptionFromUserIdAsync(userId)
 
 	if humanoidDescription.GraphicTShirt ~= 0 then
 		table.insert(accessoryIds, humanoidDescription.GraphicTShirt)
@@ -93,7 +97,7 @@ module.getUserAccessories = function(userId: number): {AccessoryInfo}
 	local accessories: {AccessoryInfo} = {}
 	for _, id in accessoryIds do
 		local success, message = pcall(function()
-			local data = Marketplace:GetProductInfo(id)
+			local data = Marketplace:GetProductInfoAsync(id)
 			table.insert(accessories, {
 				name = data.Name,
 				assetId = id,
@@ -186,8 +190,17 @@ module.CheckUserIds = function(userIds: {number}): MultiUserResult
 	}
 
 	for _, userId in userIds do
+		if userId < 0 then
+			continue
+		end
+		
 		local accessories = module.getUserAccessories(userId)
-		if not accessories or #accessories == 0 then
+		if not accessories then
+			return { success = false, message = `Accessories failed to fetch for user {userId}` }
+		end
+
+		
+		if #accessories == 0 then
 			continue
 		end
 
@@ -258,9 +271,13 @@ end
     @returns SingleUserResult - Contains the evaluation results of the avatar.
 ]=]
 module.CheckUserId = function(userId: number): SingleUserResult
+	if userId < 0 then
+		return { success = false, message = "User is fake" } -- 💔
+	end
+	
 	local accessories = module.getUserAccessories(userId)
-	if not accessories or #accessories == 0 then
-		return { success = false, message = "No accessories found for user" }
+	if not accessories then
+		return { success = false, message = `Accessories failed to fetch for user {userId}` }
 	end
 
 	local patterns = fetchPatternsFromGit()
