@@ -51,6 +51,14 @@ The server evaluates the avatar based on a point-based system and returns the re
 `@param:userId`: The user ID of the player being evaluated\
 [`@returns:SingleUserResult`](Types.md#singleuserresult): Contains the evaluation results of the avatar
 
+### CheckHumanoidDescription
+```luau
+CheckHumanoidDescription: (humanoidDescription: HumanoidDescription) -> @AnonymousResult
+```
+Check the humanoid description's accessories for flagged patterns, determining the appropriateness of the accessories attached to the humanoid description.\
+`@param:humanoidDescription`: The humanoid description being evaluated\
+[`@return:AnonymousResult`](Types.md#anonymousresult): Evaluation results of the humanoid description
+
 ### modifyPattern
 ```luau
 modifyPattern: (listType: string, pattern: string, points: number?) -> (@PatternModifyResult)
