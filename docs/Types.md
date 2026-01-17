@@ -24,6 +24,19 @@ FlaggedItem: {
 `pattern`: The flagged sub-string of the item name\
 `score`: The score of the item according to the `pattern`
 
+### AnonymousResult
+
+```luau
+AnonymousResult: {
+	score: number?,
+	flaggedItems: {@FlaggedItem}?,
+	success: boolean,
+	message: string?,
+}
+```
+`score`: The total score of all the flagged items from the accessory pool\
+`flaggedItems`: A table containing all [flagged items](#flaggeditem) the accessory pool contained
+
 ### UserResult
 
 ```luau

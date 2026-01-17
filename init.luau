@@ -21,6 +21,13 @@ export type FlaggedItem = {
 	score: number
 }
 
+export type AnonymousResult = {
+	score: number?,
+	flaggedItems: {FlaggedItem}?,
+	success: boolean,
+	message: string?,
+}
+
 export type UserResult = {
 	userId: number,
 	score: number,
@@ -66,17 +73,12 @@ module.fetchedPatterns = nil :: PatternData?
 module.ignoreRobloxItems = false
 
 --[=[
-    Retrieves all the accessories of a user, including shirts, pants, and any other assets that are currently worn.
-    @param userId: number - The user ID of the player whose accessories are being retrieved.
-    @returns accessories: {AccessoryInfo} - A table containing the names and asset IDs of the user's accessories.
+    Retrieves all the accessories of a humanoid description, including shirts, pants, and any other assets that are on the description.
+    @param humanoidDescription: HumanoidDescription - The humanoid description which is going to have it's accessories retrieved.
+    @returns accessories: {AccessoryInfo} - A table containing the names and asset IDs of the humanoid description's accessories.
 ]=]
-module.getUserAccessories = function(userId: number): {AccessoryInfo}?
-	if userId < 0 then
-		return {}
-	end
-	
+module.getHumanoidDescriptionAccessories = function(humanoidDescription: HumanoidDescription): {AccessoryInfo}
 	local accessoryIds = {}
-	local humanoidDescription = Players:GetHumanoidDescriptionFromUserIdAsync(userId)
 
 	if humanoidDescription.GraphicTShirt ~= 0 then
 		table.insert(accessoryIds, humanoidDescription.GraphicTShirt)
@@ -111,6 +113,21 @@ module.getUserAccessories = function(userId: number): {AccessoryInfo}?
 	end
 
 	return accessories
+end
+
+--[=[
+    Retrieves all the accessories of a user, including shirts, pants, and any other assets that are currently worn.
+    @param userId: number - The user ID of the player whose accessories are being retrieved.
+    @returns accessories: {AccessoryInfo} - A table containing the names and asset IDs of the user's accessories.
+]=]
+module.getUserAccessories = function(userId: number): {AccessoryInfo}?
+	if userId < 0 then
+		return {}
+	end
+	
+	local humanoidDescription = Players:GetHumanoidDescriptionFromUserIdAsync(userId)
+
+	return module.getHumanoidDescriptionAccessories(humanoidDescription)
 end
 
 --[=[
@@ -336,6 +353,81 @@ module.CheckUserId = function(userId: number): SingleUserResult
 	local result: SingleUserResult = {
 		success = true,
 		userId = userId,
+		score = totalScore,
+		flaggedItems = flaggedItems
+	}
+
+	return result
+end
+
+--[=[
+    Check the humanoid description's accessories for flagged patterns, determining the appropriateness of the avatar.
+    The server evaluates the avatar based on a point-based system and returns the result in table format.
+    
+	@param humanoidDescription: HumanoidDescription - The humanoid description being evaluated.
+	@return AnonymousResult - Evaluation results of the humanoid description
+]=]
+module.CheckHumanoidDescription = function(humanoidDescription: HumanoidDescription): AnonymousResult
+	local accessories = module.getHumanoidDescriptionAccessories(humanoidDescription)
+	if not accessories then
+		return { success = false, message = "Accessories failed to fetch for humanoid description" }
+	end
+
+	local patterns = fetchPatternsFromGit()
+	if not patterns then
+		return { success = false, message = "Failed to fetch patterns from Git" }
+	end
+
+	local flaggedItems: {FlaggedItem} = {}
+	local bestMatchPerAccessory: {[AccessoryInfo]: FlaggedItem} = {}
+	local totalScore = 0
+
+	for _, accessory in accessories do
+		-- Skip if this accessory should be ignored
+		if shouldIgnoreAccessory(accessory) then
+			continue
+		end
+
+		local accessoryName = accessory.name
+		local lowerAccessoryName = accessoryName:lower()
+
+		for _, item in patterns.blackList do
+			local lowerPattern = item.pattern:lower()
+			if string.match(lowerAccessoryName, lowerPattern) then
+				local isWhitelisted = false
+
+				for _, pattern in patterns.whiteList do
+					if string.match(lowerAccessoryName, pattern:lower()) then
+						isWhitelisted = true
+						break
+					end
+				end
+
+				if not isWhitelisted then
+					local matchFound = string.match(lowerAccessoryName, lowerPattern)
+					if matchFound then
+						local originalCaseMatch = findOriginalCaseMatch(accessoryName, lowerPattern)
+						local currentBest = bestMatchPerAccessory[accessory]
+						if not currentBest or item.points > currentBest.score then
+							bestMatchPerAccessory[accessory] = {
+								item = accessory,
+								pattern = originalCaseMatch,
+								score = item.points
+							}
+						end
+					end
+				end
+			end
+		end
+	end
+
+	for _, match in bestMatchPerAccessory do
+		table.insert(flaggedItems, match)
+		totalScore += match.score
+	end
+
+	local result: AnonymousResult = {
+		success = true,
 		score = totalScore,
 		flaggedItems = flaggedItems
 	}
